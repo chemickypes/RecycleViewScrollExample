@@ -47,8 +47,18 @@ public class BlankFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyRecyclerViewAdapter(getDataSet());
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(new UPScrollListener(getActivity()) {
+        mRecyclerView.addOnScrollListener(new UPScrollListener() {
+
             @Override
+            public void onHide() {
+                cView.animate().translationY(-cView.getHeight());
+            }
+
+            @Override
+            public void onShow() {
+                cView.animate().translationY(0);
+            }
+
             public void onMoved(int distance) {
                 cView.setTranslationY(-distance);
                 //cView.animate().translationY(-distance);

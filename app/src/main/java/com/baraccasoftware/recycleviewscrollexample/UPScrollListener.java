@@ -3,6 +3,7 @@ package com.baraccasoftware.recycleviewscrollexample;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 
@@ -11,42 +12,51 @@ import android.util.TypedValue;
  */
 public abstract class UPScrollListener extends RecyclerView.OnScrollListener {
 
-    private int toolbarOffset = 0;
-    private int toolbarHeight;
+    private static final int HIDE_THRESHOLD = 20;
 
-    public UPScrollListener(Context context) {
-        int[] actionBarAttr = new int[] { android.R.attr.actionBarSize };
-        TypedArray a = context.obtainStyledAttributes(actionBarAttr);
+    private int mScrolledDistance = 0;
+    private boolean mControlsVisible = true;
 
-        Resources r = context.getResources();
-        int dd = (int)context.getResources().getDimension(R.dimen.dimen_bar);
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dd, r.getDisplayMetrics());
+    public UPScrollListener() {
 
-        toolbarHeight = (int) px + 10;
-        //a.recycle();
 
 
     }
 
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
         super.onScrolled(recyclerView, dx, dy);
 
-        clipToolbarOffset();
-        onMoved(toolbarOffset);
+        int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 
-        if((toolbarOffset < toolbarHeight && dy>0) || (toolbarOffset > 0 && dy<0)) {
-            toolbarOffset += dy;
+        if (firstVisibleItem == 0) {
+            if(!mControlsVisible) {
+                onShow();
+                mControlsVisible = true;
+            }
+        } else {
+            if (mScrolledDistance > HIDE_THRESHOLD && mControlsVisible) {
+                onHide();
+                mControlsVisible = false;
+                mScrolledDistance = 0;
+            } else if (mScrolledDistance < -HIDE_THRESHOLD && !mControlsVisible) {
+                onShow();
+                mControlsVisible = true;
+                mScrolledDistance = 0;
+            }
         }
+        if((mControlsVisible && dy>0) || (!mControlsVisible && dy<0)) {
+            mScrolledDistance += dy;
+        }
+
+
     }
 
-    private void clipToolbarOffset() {
-        if(toolbarOffset > toolbarHeight) {
-            toolbarOffset = toolbarHeight;
-        } else if(toolbarOffset < 0) {
-            toolbarOffset = 0;
-        }
-    }
+
+
+    public abstract void onHide();
+    public abstract void onShow();
 
     public abstract void onMoved(int distance);
 }

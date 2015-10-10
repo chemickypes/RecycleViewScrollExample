@@ -5,16 +5,18 @@
     android:orientation="vertical"
     tools:context="com.baraccasoftware.recycleviewscrollexample.BlankFragment">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dimen_bar"
-        android:background="@android:color/holo_red_dark"
-        android:id="@+id/cView"/>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:scrollbars="vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_bar"
+        android:background="@android:color/holo_red_dark"
+        android:id="@+id/cView"/>
 
 </RelativeLayout>
